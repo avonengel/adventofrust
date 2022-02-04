@@ -6,11 +6,11 @@ fn count_increases(text: &str) -> u32 {
     for line in text.lines() {
         let current = line.parse::<u32>().unwrap();
         if previous < current {
-            increases = increases + 1;
+            increases += 1;
         }
         previous = current;
     }
-    return increases;
+    increases
 }
 
 #[allow(dead_code)]
@@ -21,11 +21,11 @@ fn count_sliding_window_increases(text: &str) -> u32 {
     for slice in numbers.windows(3) {
         let current = slice.iter().sum();
         if previous < current {
-            increases = increases + 1;
+            increases += 1;
         }
         previous = current;
     }
-    return increases;
+    increases
 }
 
 #[cfg(test)]
