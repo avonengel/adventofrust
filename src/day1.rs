@@ -51,16 +51,27 @@ mod tests {
         assert_eq!(super::count_increases(SAMPLE_INPUT), 7)
     }
 
-    #[test]
-    fn it_counts_increases_from_file() {
+    fn read_file_content() -> String {
         let mut file = File::open("src/day1/input").unwrap();
         let mut contents = String::new();
         assert!(file.read_to_string(&mut contents).is_ok());
+        return contents
+    }
+
+    #[test]
+    fn it_counts_increases_from_file() {
+        let contents = read_file_content();
         assert_eq!(super::count_increases(&contents), 1616);
     }
 
     #[test]
     fn it_counts_sliding_window_increases() {
         assert_eq!(super::count_sliding_window_increases(SAMPLE_INPUT), 5)
+    }
+
+    #[test]
+    fn it_counts_sliding_window_increases_from_file() {
+        let contents = read_file_content();
+        assert_eq!(super::count_sliding_window_increases(&contents), 1645)
     }
 }
