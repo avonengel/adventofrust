@@ -20,8 +20,7 @@ fn main() {
 
     println!("\nDay3:");
     let day3_input = read_file_content("src/day3/input");
-    println!("  Part 1 gamma rate: {}", day3::gamma_rate(&day3_input));
-
+    println!("  Part 1 power consumption: {}", day3::power_consumption(&day3_input));
 }
 
 fn read_file_content(path: &str) -> String {
