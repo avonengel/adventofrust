@@ -1,4 +1,4 @@
-use std::ops::{BitAnd, Shr};
+use std::ops::Shl;
 
 pub fn gamma_rate(input: &str) -> i32 {
     let line_length = input.lines()
@@ -6,34 +6,27 @@ pub fn gamma_rate(input: &str) -> i32 {
         .map(|l| { l.len() })
         .expect("must contain at least one line");
     let mut one_bits = vec![0; line_length];
-    let numbers = input.lines().map(|line| { u32::from_str_radix(line, 2).unwrap() });
     let mut count = 0;
 
-    // TODO: clean up this ugly mess. Do we really have to parse to int? back and forth, even! :(
-    for number in numbers {
+    for line in input.lines() {
         count += 1;
-        // println!("number {:3}: {:0width$b}", count, number, width = line_length);
-        // print!("{:12}", "");
-        for idx in 0..line_length {
-            if number.shr(idx).bitand(1u32) > 0 {
-                one_bits[idx] += 1;
-                // print!("+");
-            } else {
-                // print!(" ");
+        for (idx, char) in line.chars().enumerate() {
+            match char {
+                '1' => one_bits[idx] += 1,
+                '0' => continue,
+                _ => {
+                    panic!("Expected input to contain only '0' and '1', got {}", char)
+                }
             }
-
         }
-        // println!();
     }
-    let r : String = one_bits.iter().rev().map(|ones| {
+    one_bits.iter().rev().enumerate().map(|(i, ones)| {
         if ones > &(count / 2) {
-            "1"
-        } else {
-            "0"
+            return 1.shl(i)
         }
-    }).collect();
-    // println!("binary string is {}", r);
-    i32::from_str_radix(&r, 2).unwrap()
+        0
+    }).sum()
+
 }
 
 #[cfg(test)]
