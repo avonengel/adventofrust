@@ -7,6 +7,11 @@ pub struct BitField {
     input: String,
 }
 
+enum BitCriteria {
+    LeastCommon,
+    MostCommon,
+}
+
 impl BitField {
     pub fn new(input: &str) -> BitField {
         let line_length = input.lines()
@@ -54,45 +59,34 @@ impl BitField {
     }
 
     fn oxygen_generator_rating(&self) -> u32 {
-        let mut candidates = self.input.lines().collect::<Vec<&str>>();
-        for (pos, _) in self.one_bits.iter().enumerate() {
-            let ones_count = count_ones_at(&candidates, pos);
-            // println!("Counted {:?}, {}/2 = {}:", ones_count, candidates.len(), (candidates.len() as f64 / 2f64).ceil());
-            // println!("{:#?}", candidates);
-            // println!("     {}^", "-".repeat(pos));
-
-
-            let bit_state = if ones_count < (candidates.len() as f64 / 2f64).ceil() as usize {
-                '0'
-            } else {
-                '1'
-            };
-            candidates = candidates.iter()
-                .filter(|&line| { line.chars().nth(pos).unwrap() == bit_state })
-                .copied()
-                .collect();
-            if candidates.len() == 1 {
-                return u32::from_str_radix(candidates[0], 2).unwrap();
-            }
-        }
-        // println!("candidates: {:?}", candidates);
-        panic!("did not reduce candidates to just 1")
+        self.filter_by_bit_criteria(BitCriteria::MostCommon)
     }
 
     fn co2_scrubber_rating(&self) -> u32 {
+        self.filter_by_bit_criteria(BitCriteria::LeastCommon)
+    }
+
+    fn filter_by_bit_criteria(&self, criterion: BitCriteria) -> u32 {
         let mut candidates = self.input.lines().collect::<Vec<&str>>();
         for (pos, _) in self.one_bits.iter().enumerate() {
             let ones_count = count_ones_at(&candidates, pos);
-            // println!("Counted {:?}, {}/2 = {}:", ones_count, candidates.len(), (candidates.len() as f64 / 2f64).ceil());
-            // println!("{:#?}", candidates);
-            // println!("     {}^", "-".repeat(pos));
 
-
-            let bit_state = if ones_count >= (candidates.len() as f64 / 2f64).ceil() as usize {
-                '0'
-            } else {
-                '1'
+            let bit_state = match criterion {
+                BitCriteria::MostCommon =>
+                    if ones_count < (candidates.len() as f64 / 2f64).ceil() as usize {
+                        '0'
+                    } else {
+                        '1'
+                    }
+                BitCriteria::LeastCommon =>
+                    if ones_count >= (candidates.len() as f64 / 2f64).ceil() as usize {
+                        '0'
+                    } else {
+                        '1'
+                    }
             };
+
+
             candidates = candidates.iter()
                 .filter(|&line| { line.chars().nth(pos).unwrap() == bit_state })
                 .copied()
@@ -101,7 +95,6 @@ impl BitField {
                 return u32::from_str_radix(candidates[0], 2).unwrap();
             }
         }
-        // println!("candidates: {:?}", candidates);
         panic!("did not reduce candidates to just 1")
     }
 
