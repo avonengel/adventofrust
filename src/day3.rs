@@ -1,13 +1,14 @@
 use std::ops::Shl;
 
 #[derive(Debug)]
-struct BitField {
+pub struct BitField {
     one_bits: Vec<u32>,
     line_count: usize,
+    input: String,
 }
 
 impl BitField {
-    fn new(input: &str) -> BitField {
+    pub fn new(input: &str) -> BitField {
         let line_length = input.lines()
             .next()
             .map(|l| { l.len() })
@@ -16,7 +17,7 @@ impl BitField {
         let mut line_count = 0;
 
         for (idx, line) in input.lines().enumerate() {
-            line_count = idx+1;
+            line_count = idx + 1;
             for (idx, char) in line.chars().enumerate() {
                 match char {
                     '1' => one_bits[idx] += 1,
@@ -27,13 +28,13 @@ impl BitField {
                 }
             }
         }
-        BitField { one_bits, line_count }
+        BitField { one_bits, line_count, input: input.to_string() }
     }
 
     fn gamma_rate(&self) -> u32 {
         self.one_bits.iter().rev().enumerate().map(|(i, ones)| {
             if ones > &(self.line_count as u32 / 2) {
-                return 1u32.shl(i)
+                return 1u32.shl(i);
             }
             0
         }).sum()
@@ -42,20 +43,75 @@ impl BitField {
     fn epsilon_rate(&self) -> u32 {
         self.one_bits.iter().rev().enumerate().map(|(i, ones)| {
             if ones <= &(self.line_count as u32 / 2) {
-                return 1u32.shl(i)
+                return 1u32.shl(i);
             }
             0
         }).sum()
     }
 
-    fn power_consumption(&self) -> u32 {
+    pub fn power_consumption(&self) -> u32 {
         self.epsilon_rate() * self.gamma_rate()
+    }
+
+    fn oxygen_generator_rating(&self) -> u32 {
+        let mut candidates = self.input.lines().collect::<Vec<&str>>();
+        for (pos, _) in self.one_bits.iter().enumerate() {
+            let ones_count = count_ones_at(&candidates, pos);
+            // println!("Counted {:?}, {}/2 = {}:", ones_count, candidates.len(), (candidates.len() as f64 / 2f64).ceil());
+            // println!("{:#?}", candidates);
+            // println!("     {}^", "-".repeat(pos));
+
+
+            let bit_state = if ones_count < (candidates.len() as f64 / 2f64).ceil() as usize {
+                '0'
+            } else {
+                '1'
+            };
+            candidates = candidates.iter()
+                .filter(|&line| { line.chars().nth(pos).unwrap() == bit_state })
+                .copied()
+                .collect();
+            if candidates.len() == 1 {
+                return u32::from_str_radix(candidates[0], 2).unwrap();
+            }
+        }
+        // println!("candidates: {:?}", candidates);
+        panic!("did not reduce candidates to just 1")
+    }
+
+    fn co2_scrubber_rating(&self) -> u32 {
+        let mut candidates = self.input.lines().collect::<Vec<&str>>();
+        for (pos, _) in self.one_bits.iter().enumerate() {
+            let ones_count = count_ones_at(&candidates, pos);
+            // println!("Counted {:?}, {}/2 = {}:", ones_count, candidates.len(), (candidates.len() as f64 / 2f64).ceil());
+            // println!("{:#?}", candidates);
+            // println!("     {}^", "-".repeat(pos));
+
+
+            let bit_state = if ones_count >= (candidates.len() as f64 / 2f64).ceil() as usize {
+                '0'
+            } else {
+                '1'
+            };
+            candidates = candidates.iter()
+                .filter(|&line| { line.chars().nth(pos).unwrap() == bit_state })
+                .copied()
+                .collect();
+            if candidates.len() == 1 {
+                return u32::from_str_radix(candidates[0], 2).unwrap();
+            }
+        }
+        // println!("candidates: {:?}", candidates);
+        panic!("did not reduce candidates to just 1")
+    }
+
+    pub fn life_support_rating(&self) -> u32 {
+        self.oxygen_generator_rating() * self.co2_scrubber_rating()
     }
 }
 
-pub fn power_consumption(input: &str) -> u32 {
-    let bit_field = BitField::new(input);
-    bit_field.power_consumption()
+fn count_ones_at(candidates: &[&str], position: usize) -> usize {
+    candidates.iter().filter(|&line| { line.chars().nth(position).unwrap() == '1' }).count()
 }
 
 #[cfg(test)]
@@ -95,6 +151,29 @@ mod test {
     #[test]
     fn test_power_consumption_from_file() {
         let input = crate::read_file_content("src/day3/input");
-        assert_eq!(3959450, power_consumption(&input));
+        let bit_field = BitField::new(&input);
+        assert_eq!(3959450, bit_field.power_consumption());
+    }
+
+    #[test]
+    fn test_life_support_rating_from_file() {
+        let input = crate::read_file_content("src/day3/input");
+        let bit_field = BitField::new(&input);
+        assert_eq!(7440311, bit_field.life_support_rating());
+    }
+
+    #[test]
+    fn test_oxygen_generator_rating() {
+        assert_eq!(0b10111, BitField::new(SAMPLE_INPUT).oxygen_generator_rating())
+    }
+
+    #[test]
+    fn test_co2_scrubber_rating() {
+        assert_eq!(0b01010, BitField::new(SAMPLE_INPUT).co2_scrubber_rating())
+    }
+
+    #[test]
+    fn test_life_support_rating() {
+        assert_eq!(230, BitField::new(SAMPLE_INPUT).life_support_rating())
     }
 }
