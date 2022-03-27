@@ -1,10 +1,12 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 use std::fs::File;
 use std::io::prelude::*;
 use crate::day3::BitField;
+use crate::day4::BingoGame;
 
 fn main() {
     println!("Advent, Advent, ein Lichtlein brennt:");
@@ -24,6 +26,11 @@ fn main() {
     let bit_field = BitField::new(&day3_input);
     println!("  Part 1 power consumption: {}", bit_field.power_consumption());
     println!("  Part 2 life support rating: {}", bit_field.life_support_rating());
+
+    println!("\nDay4:");
+    let day4_input = read_file_content("src/day4/input");
+    let bingo_game = BingoGame::new(&day4_input);
+    println!("  Part 1 score of first winning board: {}", bingo_game.first_winner_score());
 }
 
 fn read_file_content(path: &str) -> String {
