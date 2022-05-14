@@ -14,9 +14,10 @@ enum BitCriteria {
 
 impl BitField {
     pub fn new(input: &str) -> BitField {
-        let line_length = input.lines()
+        let line_length = input
+            .lines()
             .next()
-            .map(|l| { l.len() })
+            .map(|l| l.len())
             .expect("must contain at least one line");
         let mut one_bits = vec![0; line_length];
         let mut line_count = 0;
@@ -33,25 +34,39 @@ impl BitField {
                 }
             }
         }
-        BitField { one_bits, line_count, input: input.to_string() }
+        BitField {
+            one_bits,
+            line_count,
+            input: input.to_string(),
+        }
     }
 
     fn gamma_rate(&self) -> u32 {
-        self.one_bits.iter().rev().enumerate().map(|(i, ones)| {
-            if ones > &(self.line_count as u32 / 2) {
-                return 1u32.shl(i);
-            }
-            0
-        }).sum()
+        self.one_bits
+            .iter()
+            .rev()
+            .enumerate()
+            .map(|(i, ones)| {
+                if ones > &(self.line_count as u32 / 2) {
+                    return 1u32.shl(i);
+                }
+                0
+            })
+            .sum()
     }
 
     fn epsilon_rate(&self) -> u32 {
-        self.one_bits.iter().rev().enumerate().map(|(i, ones)| {
-            if ones <= &(self.line_count as u32 / 2) {
-                return 1u32.shl(i);
-            }
-            0
-        }).sum()
+        self.one_bits
+            .iter()
+            .rev()
+            .enumerate()
+            .map(|(i, ones)| {
+                if ones <= &(self.line_count as u32 / 2) {
+                    return 1u32.shl(i);
+                }
+                0
+            })
+            .sum()
     }
 
     pub fn power_consumption(&self) -> u32 {
@@ -72,23 +87,25 @@ impl BitField {
             let ones_count = count_ones_at(&candidates, pos);
 
             let bit_state = match criterion {
-                BitCriteria::MostCommon =>
+                BitCriteria::MostCommon => {
                     if ones_count < (candidates.len() as f64 / 2f64).ceil() as usize {
                         '0'
                     } else {
                         '1'
                     }
-                BitCriteria::LeastCommon =>
+                }
+                BitCriteria::LeastCommon => {
                     if ones_count >= (candidates.len() as f64 / 2f64).ceil() as usize {
                         '0'
                     } else {
                         '1'
                     }
+                }
             };
 
-
-            candidates = candidates.iter()
-                .filter(|&line| { line.chars().nth(pos).unwrap() == bit_state })
+            candidates = candidates
+                .iter()
+                .filter(|&line| line.chars().nth(pos).unwrap() == bit_state)
                 .copied()
                 .collect();
             if candidates.len() == 1 {
@@ -104,7 +121,10 @@ impl BitField {
 }
 
 fn count_ones_at(candidates: &[&str], position: usize) -> usize {
-    candidates.iter().filter(|&line| { line.chars().nth(position).unwrap() == '1' }).count()
+    candidates
+        .iter()
+        .filter(|&line| line.chars().nth(position).unwrap() == '1')
+        .count()
 }
 
 #[cfg(test)]
@@ -157,7 +177,10 @@ mod test {
 
     #[test]
     fn test_oxygen_generator_rating() {
-        assert_eq!(0b10111, BitField::new(SAMPLE_INPUT).oxygen_generator_rating())
+        assert_eq!(
+            0b10111,
+            BitField::new(SAMPLE_INPUT).oxygen_generator_rating()
+        )
     }
 
     #[test]

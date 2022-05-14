@@ -14,7 +14,10 @@ pub fn count_increases(text: &str) -> u32 {
 pub fn count_sliding_window_increases(text: &str) -> u32 {
     let mut previous: u32 = u32::MAX;
     let mut increases = 0;
-    let numbers: Vec<u32> = text.lines().map(|x| -> u32 { x.parse::<u32>().unwrap() }).collect();
+    let numbers: Vec<u32> = text
+        .lines()
+        .map(|x| -> u32 { x.parse::<u32>().unwrap() })
+        .collect();
     for slice in numbers.windows(3) {
         let current = slice.iter().sum();
         if previous < current {
@@ -28,7 +31,7 @@ pub fn count_sliding_window_increases(text: &str) -> u32 {
 #[cfg(test)]
 mod tests {
     use indoc::indoc;
-    
+
     const SAMPLE_INPUT: &str = indoc! {"199
     200
     208

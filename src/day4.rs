@@ -34,7 +34,12 @@ impl BingoBoard {
     }
 
     fn score(&self, win_draw: &[u32]) -> u32 {
-        let sum_unmarked: u32 = self.numbers.iter().flatten().filter(|n| !win_draw.contains(n)).sum();
+        let sum_unmarked: u32 = self
+            .numbers
+            .iter()
+            .flatten()
+            .filter(|n| !win_draw.contains(n))
+            .sum();
         sum_unmarked * win_draw.last().unwrap()
     }
 }
@@ -42,7 +47,12 @@ impl BingoBoard {
 impl BingoGame {
     pub fn new(input: &str) -> Self {
         let mut lines = input.lines().filter(|l| !l.is_empty());
-        let numbers_drawn: Vec<u32> = lines.next().unwrap().split(',').map(|nbr| { nbr.parse().unwrap() }).collect();
+        let numbers_drawn: Vec<u32> = lines
+            .next()
+            .unwrap()
+            .split(',')
+            .map(|nbr| nbr.parse().unwrap())
+            .collect();
 
         let mut boards = Vec::new();
         loop {
@@ -56,11 +66,16 @@ impl BingoGame {
                 }
             }
             if lines_taken < 5 {
-                break
+                break;
             }
-            boards.push(BingoBoard { numbers: board_numbers })
+            boards.push(BingoBoard {
+                numbers: board_numbers,
+            })
         }
-        BingoGame { numbers_drawn, boards }
+        BingoGame {
+            numbers_drawn,
+            boards,
+        }
     }
 
     pub fn first_winner_score(&self) -> u32 {
@@ -80,8 +95,8 @@ impl BingoGame {
 
 #[cfg(test)]
 mod test {
-    use indoc::indoc;
     use super::*;
+    use indoc::indoc;
 
     const SAMPLE_INPUT: &str = indoc! {"
         7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
@@ -104,7 +119,6 @@ mod test {
         22 11 13  6  5
          2  0 12  3  7
     "};
-
 
     #[test]
     fn test_parser() {
