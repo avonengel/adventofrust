@@ -10,7 +10,7 @@ struct BingoBoard {
 }
 
 impl BingoBoard {
-    fn rounds_until_win(&self, numbers_drawn: &Vec<u32>) -> usize {
+    fn rounds_until_win(&self, numbers_drawn: &[u32]) -> usize {
         for count in 5..numbers_drawn.len() {
             let current_draw = &numbers_drawn[0..count];
             for row in self.numbers.iter() {
@@ -42,7 +42,7 @@ impl BingoBoard {
 impl BingoGame {
     pub fn new(input: &str) -> Self {
         let mut lines = input.lines().filter(|l| !l.is_empty());
-        let numbers_drawn: Vec<u32> = lines.next().unwrap().split(",").map(|nbr| { nbr.parse().unwrap() }).collect();
+        let numbers_drawn: Vec<u32> = lines.next().unwrap().split(',').map(|nbr| { nbr.parse().unwrap() }).collect();
 
         let mut boards = Vec::new();
         loop {
