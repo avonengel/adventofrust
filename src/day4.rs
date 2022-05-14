@@ -45,20 +45,18 @@ impl BingoGame {
         let numbers_drawn: Vec<u32> = lines.next().unwrap().split(",").map(|nbr| { nbr.parse().unwrap() }).collect();
 
         let mut boards = Vec::new();
-        'outer: loop {
+        loop {
             let mut board_numbers = [[0; 5]; 5];
-            for line_idx in 0..5 {
-                match lines.next() {
-                    Some(line) => {
-                        let mut numbers = line.split_whitespace();
-                        for number_idx in 0..5 {
-                            board_numbers[line_idx][number_idx] = numbers.next().unwrap().parse().unwrap();
-                        }
-                    }
-                    None => {
-                        break 'outer;
-                    }
+            let mut lines_taken = 0;
+            for (line_idx, line) in lines.by_ref().take(5).enumerate() {
+                lines_taken += 1;
+                let mut numbers = line.split_whitespace();
+                for number_idx in 0..5 {
+                    board_numbers[line_idx][number_idx] = numbers.next().unwrap().parse().unwrap();
                 }
+            }
+            if lines_taken < 5 {
+                break
             }
             boards.push(BingoBoard { numbers: board_numbers })
         }
