@@ -9,6 +9,36 @@ struct BingoBoard {
     numbers: [[u32; 5]; 5],
 }
 
+impl BingoBoard {
+    fn rounds_until_win(&self, numbers_drawn: &Vec<u32>) -> usize {
+        for count in 5..numbers_drawn.len() {
+            let current_draw = &numbers_drawn[0..count];
+            for row in self.numbers.iter() {
+                if row.iter().filter(|n| current_draw.contains(n)).count() == 5 {
+                    return count;
+                }
+            }
+            for col in 0..5 {
+                let mut matched = 0;
+                for row in self.numbers.iter() {
+                    if current_draw.contains(&row[col]) {
+                        matched += 1;
+                    }
+                }
+                if matched == 5 {
+                    return count;
+                }
+            }
+        }
+        usize::MAX
+    }
+
+    fn score(&self, win_draw: &[u32]) -> u32 {
+        let sum_unmarked: u32 = self.numbers.iter().flatten().filter(|n| !win_draw.contains(n)).sum();
+        sum_unmarked * win_draw.last().unwrap()
+    }
+}
+
 impl BingoGame {
     pub fn new(input: &str) -> Self {
         let mut lines = input.lines().filter(|l| !l.is_empty());
@@ -26,7 +56,7 @@ impl BingoGame {
                         }
                     }
                     None => {
-                        break 'outer
+                        break 'outer;
                     }
                 }
             }
@@ -36,7 +66,17 @@ impl BingoGame {
     }
 
     pub fn first_winner_score(&self) -> u32 {
-        todo!("implement first_winner_score")
+        let mut winning_score = 0;
+        let mut min_winning_rounds = usize::MAX;
+
+        for board in self.boards.iter() {
+            let win_rounds = board.rounds_until_win(&self.numbers_drawn);
+            if win_rounds < min_winning_rounds {
+                min_winning_rounds = win_rounds;
+                winning_score = board.score(&self.numbers_drawn[0..win_rounds]);
+            }
+        }
+        winning_score
     }
 }
 
@@ -82,8 +122,8 @@ mod test {
 
         assert_eq!(14, game.boards.last().unwrap().numbers[0][0]);
         assert_eq!(7, game.boards.last().unwrap().numbers[4][4]);
-
     }
+
     #[test]
     fn test_first_winner_score() {
         let game = BingoGame::new(SAMPLE_INPUT);
