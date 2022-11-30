@@ -103,11 +103,8 @@ impl BitField {
                 }
             };
 
-            candidates = candidates
-                .iter()
-                .filter(|&line| line.chars().nth(pos).unwrap() == bit_state)
-                .copied()
-                .collect();
+            candidates
+                .retain(|&line| line.chars().nth(pos).unwrap() == bit_state);
             if candidates.len() == 1 {
                 return u32::from_str_radix(candidates[0], 2).unwrap();
             }
