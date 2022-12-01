@@ -7,8 +7,9 @@ fn main() {
     println!("Advent, Advent, ein Lichtlein brennt:");
 
     println!("\nDay1:");
-    let day1_input = read_file_content("src/day1/input");
-    // println!("  Part 1: {}", day1::count_increases(&day1_input));
+    let day1_input = read_file_content("src/day1/input.txt");
+    println!("  Part 1: {}", day1::most_calories(&day1_input));
+    println!("  Part 2: {}", day1::top3_calories(&day1_input));
 }
 
 fn read_file_content(path: &str) -> String {
