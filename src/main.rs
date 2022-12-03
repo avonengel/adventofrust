@@ -1,5 +1,7 @@
 mod day1;
 mod day2;
+mod day3;
+
 
 use std::fs::File;
 use std::io::prelude::*;
@@ -17,6 +19,11 @@ fn main() {
     let day2_input = read_file_content("src/day2/input.txt");
     println!("  Part 1: {}", day2::total_score(&day2_input));
     println!("  Part 2: {}", day2::total_score2(&day2_input));
+
+    println!("\nDay3:");
+    let day3_input = read_file_content("src/day3/input.txt");
+    println!("  Part 1: {}", day3::priority_sum(&day3_input));
+    println!("  Part 2: {}", day3::badge_priority_sum(&day3_input));
 }
 
 fn read_file_content(path: &str) -> String {
