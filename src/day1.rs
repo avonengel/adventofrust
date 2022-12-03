@@ -42,7 +42,7 @@ pub(crate) fn most_calories(input: &str) -> u32 {
             result = sum;
         }
     }
-    return result;
+    result
 }
 
 pub(crate) fn top3_calories(input: &str) -> u32 {
@@ -51,26 +51,22 @@ pub(crate) fn top3_calories(input: &str) -> u32 {
     let mut sum = 0;
     for line in input.lines() {
         if line.is_empty() {
-            for (idx, r) in result.iter().enumerate() {
-                if r < &sum {
-                    result[idx] = sum;
-                    result.sort();
-                    println!("{:?}", result);
-                    break;
-                }
-            }
+            consider_elve_calories(&mut result, &sum);
             sum = 0
         } else {
             sum += line.parse::<u32>().unwrap();
         }
     }
+    consider_elve_calories(&mut result, &sum);
+    result.iter().sum()
+}
+
+fn consider_elve_calories(result: &mut [u32; 3], sum: &u32) {
     for (idx, r) in result.iter().enumerate() {
         if r < &sum {
-            result[idx] = sum;
+            result[idx] = *sum;
             result.sort();
-            println!("{:?}", result);
             break;
         }
     }
-    return result.iter().sum();
 }
