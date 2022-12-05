@@ -35,7 +35,7 @@ fn main() {
     println!("\nDay5:");
     let day5_input = read_file_content("src/day5/input.txt");
     println!("  Part 1: {}", day5::crate_message(&day5_input));
-    // println!("  Part 2: {}", day5::overlapping_pairs(&day5_input));
+    println!("  Part 1: {}", day5::crate_message2(&day5_input));
 }
 
 fn read_file_content(path: &str) -> String {
