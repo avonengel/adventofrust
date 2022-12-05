@@ -2,6 +2,7 @@ mod day1;
 mod day2;
 mod day3;
 mod day4;
+mod day5;
 
 
 use std::fs::File;
@@ -25,10 +26,16 @@ fn main() {
     let day3_input = read_file_content("src/day3/input.txt");
     println!("  Part 1: {}", day3::priority_sum(&day3_input));
     println!("  Part 2: {}", day3::badge_priority_sum(&day3_input));
+
     println!("\nDay4:");
     let day4_input = read_file_content("src/day4/input.txt");
     println!("  Part 1: {}", day4::fully_contained_pairs(&day4_input));
     println!("  Part 2: {}", day4::overlapping_pairs(&day4_input));
+
+    println!("\nDay5:");
+    let day5_input = read_file_content("src/day5/input.txt");
+    println!("  Part 1: {}", day5::crate_message(&day5_input));
+    // println!("  Part 2: {}", day5::overlapping_pairs(&day5_input));
 }
 
 fn read_file_content(path: &str) -> String {
