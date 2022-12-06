@@ -1,3 +1,5 @@
+use std::ops::RangeInclusive;
+
 #[cfg(test)]
 mod tests {
     use indoc::indoc;
@@ -22,9 +24,13 @@ mod tests {
 }
 
 pub(crate) fn fully_contained_pairs(input: &str) -> u32 {
+    map_count_assignments(input, is_fully_contained)
+}
+
+pub(crate) fn map_count_assignments(input: &str, predicate: fn(&str, &str) -> bool) -> u32 {
     input.lines().map(|line| {
         match line.split_once(",") {
-            Some((first, second)) => is_fully_contained(first, second),
+            Some((first, second)) => predicate(first, second),
             _ => panic!("Could not parse line: {:?}", line)
         }
     })
@@ -33,41 +39,23 @@ pub(crate) fn fully_contained_pairs(input: &str) -> u32 {
 }
 
 pub(crate) fn overlapping_pairs(input: &str) -> u32 {
-    input.lines().map(|line| {
-        match line.split_once(",") {
-            Some((first, second)) => overlaps(first, second),
-            _ => panic!("Could not parse line: {:?}", line)
-        }
-    })
-        .filter(|x| { *x })
-        .count() as u32
+    map_count_assignments(input, overlaps)
 }
 
 fn overlaps(first: &str, second: &str) -> bool {
     let left_range = parse_range(first);
     let right_range = parse_range(second);
-    return if left_range.1 < right_range.0 {
-        false
-    } else if left_range.0 > right_range.1 {
-        false
-    } else {
-        true
-    };
+    !(left_range.end() < right_range.start() || left_range.start() > right_range.end())
 }
 
 fn is_fully_contained(first: &str, second: &str) -> bool {
     let left_range = parse_range(first);
     let right_range = parse_range(second);
-    return if left_range.0 >= right_range.0 && left_range.1 <= right_range.1 {
-        true
-    } else if left_range.0 <= right_range.0 && left_range.1 >= right_range.1 {
-        true
-    } else {
-        false
-    };
+    left_range.start() >= right_range.start() && left_range.end() <= right_range.end()
+        || left_range.start() <= right_range.start() && left_range.end() >= right_range.end()
 }
 
-fn parse_range(range: &str) -> (u32, u32) {
+fn parse_range(range: &str) -> RangeInclusive<u32> {
     let (first, second) = range.split_once("-").unwrap();
-    (first.parse().unwrap(), second.parse().unwrap())
+    return first.parse().unwrap()..=second.parse().unwrap();
 }

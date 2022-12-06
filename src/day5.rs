@@ -32,18 +32,12 @@ pub(crate) fn crate_message(input: &str) -> String {
     let (raw_stacks, raw_instructions) = input.split_at(instruction_index);
     let mut stacks = parse_stacks(raw_stacks);
     for instruction in raw_instructions.lines().filter(|l| { l.contains("move") }) {
-        // dbg!(&instruction);
-        let captures = move_re.captures(&instruction).unwrap();
-        let count = &captures[1].parse::<usize>().unwrap();
-        let from = &captures[2].parse::<usize>().unwrap();
-        let to = &captures[3].parse::<usize>().unwrap();
-        // dbg!(&instruction, &count, &from, &to, &stacks);
-        for _ in 1..=*count {
-            // dbg!("moving");
-            let crate_str = stacks[*from - 1].pop().unwrap();
-            stacks[*to - 1].push(crate_str);
+        let (count, from, to) = parse_instruction(&instruction, &move_re);
+
+        for _ in 1..=count {
+            let crate_str = stacks[from - 1].pop().unwrap();
+            stacks[to - 1].push(crate_str);
         }
-        // dbg!(&stacks);
     }
     stacks.iter().map(|vec| { *vec.last().unwrap() }).collect()
 }
@@ -54,24 +48,21 @@ pub(crate) fn crate_message2(input: &str) -> String {
     let (raw_stacks, raw_instructions) = input.split_at(instruction_index);
     let mut stacks = parse_stacks(raw_stacks);
     for instruction in raw_instructions.lines().filter(|l| { l.contains("move") }) {
-        // dbg!(&instruction);
-        let captures = move_re.captures(&instruction).unwrap();
-        let count = &captures[1].parse::<usize>().unwrap();
-        let from = &captures[2].parse::<usize>().unwrap();
-        let to = &captures[3].parse::<usize>().unwrap();
-        // dbg!(&instruction, &count, &from, &to, &stacks);
+        let (count, from, to) = parse_instruction(&instruction, &move_re);
 
-        // println!("{}", instruction);
-        let i = stacks[*from - 1].len();
-
-        // FIXME wtf .. such a mess!
-        for _ in 0..*count {
-            // dbg!(&stacks[*from - 1]);
-            let val = stacks[*from - 1].remove(i -count);
-            stacks[*to - 1].push(val);
-        }
+        let i = stacks[from - 1].len() - count;
+        let to_move: Vec<&str> = stacks[from - 1].drain(i..).collect();
+        stacks[to - 1].extend(to_move);
     }
     stacks.iter().map(|vec| { *vec.last().unwrap() }).collect()
+}
+
+fn parse_instruction(instruction: &&str, regex: &Regex) -> (usize, usize, usize) {
+    let captures = regex.captures(&instruction).unwrap();
+    let count = captures[1].parse::<usize>().unwrap();
+    let from = captures[2].parse::<usize>().unwrap();
+    let to = captures[3].parse::<usize>().unwrap();
+    (count, from, to)
 }
 
 fn parse_stacks(raw_stacks: &str) -> Vec<Vec<&str>> {
