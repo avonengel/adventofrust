@@ -29,11 +29,12 @@ mod tests {
 }
 
 pub(crate) fn unique_characters_offset(input: &str, unique_chars: usize) -> usize {
-    input.chars().enumerate().scan(Vec::new(), |state, (idx, c)| {
+    input.chars().enumerate().scan(Vec::with_capacity(unique_chars), |state, (idx, c)| {
         // dbg!(&c, &state);
-        if state.contains(&c) {
-            let new_state = Vec::from(state.split_inclusive(|&ch| { ch == c }).skip(1).next().unwrap_or_default());
-            *state = new_state;
+
+        if let Some(pos) = state.iter().position(|&ch| { ch == c }) {
+            // *state = state.split_off(pos + 1)
+            state.drain(..pos + 1);
         }
         state.push(c);
         // dbg!(&state);
@@ -42,7 +43,7 @@ pub(crate) fn unique_characters_offset(input: &str, unique_chars: usize) -> usiz
         } else {
             Some(0)
         }
-    }).inspect(|i| {
+    // }).inspect(|i| {
         // dbg!(i);
     }).filter(|&x| {
         x > 0
