@@ -3,6 +3,7 @@ mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
 
 
 use std::fs::File;
@@ -35,7 +36,12 @@ fn main() {
     println!("\nDay5:");
     let day5_input = read_file_content("src/day5/input.txt");
     println!("  Part 1: {}", day5::crate_message(&day5_input));
-    println!("  Part 1: {}", day5::crate_message2(&day5_input));
+    println!("  Part 2: {}", day5::crate_message2(&day5_input));
+
+    println!("\nDay6:");
+    let day6_input = read_file_content("src/day6/input.txt");
+    println!("  Part 1: {}", day6::unique_characters_offset(&day6_input, 4));
+    println!("  Part 2: {}", day6::unique_characters_offset(&day6_input, 14));
 }
 
 fn read_file_content(path: &str) -> String {
