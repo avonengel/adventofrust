@@ -4,6 +4,7 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 
 
 use std::fs::File;
@@ -42,6 +43,11 @@ fn main() {
     let day6_input = read_file_content("src/day6/input.txt");
     println!("  Part 1: {}", day6::unique_characters_offset(&day6_input, 4));
     println!("  Part 2: {}", day6::unique_characters_offset(&day6_input, 14));
+
+    println!("\nDay7:");
+    let day7_input = read_file_content("src/day7/input.txt");
+    println!("  Part 1: {}", day7::size_of_small_dirs(&day7_input));
+    println!("  Part 2: {}", day7::smallest_directory_to_delete(&day7_input));
 }
 
 fn read_file_content(path: &str) -> String {
