@@ -8,6 +8,7 @@ mod day7;
 mod day8;
 mod day9;
 mod day11;
+mod day12;
 
 
 use std::fs::File;
@@ -66,6 +67,11 @@ fn main() {
     let day11_input = read_file_content("src/day11/input.txt");
     println!("  Part 1: {}", day11::monkey_business(&day11_input, 20, true));
     println!("  Part 2: {}", day11::monkey_business(&day11_input, 10_000, false));
+
+    println!("\nDay12:");
+    let day12_input = read_file_content("src/day12/input.txt");
+    println!("  Part 1: {}", day12::steps_to_signal(&day12_input));
+    // println!("  Part 2: {}", day12::monkey_business(&day12_input, 10_000, false));
 }
 
 fn read_file_content(path: &str) -> String {
