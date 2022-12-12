@@ -77,7 +77,7 @@ impl DirTree {
         self.files.push(size);
     }
 
-    pub(crate) fn size(&self, dirs: &Vec<DirTree>) -> u32 {
+    pub(crate) fn size(&self, dirs: &[DirTree]) -> u32 {
         dirs.iter()
             .filter(|d| { d.name.starts_with(&self.name) })
             .map(|d| { d.file_size() }).sum()
@@ -108,7 +108,7 @@ fn parse_console_log(input: &str) -> Vec<DirTree> {
                 cwd = sub_dir.name.clone();
                 dirs.push(sub_dir);
             }
-        } else if line.starts_with("$ ls") {} else if line.starts_with("dir") {
+        } else if line.starts_with("$ ls") || line.starts_with("dir") {
         } else {
             let size: u32 = line.split_whitespace().next().map(str::parse).unwrap().unwrap();
             let idx = dirs.iter().position(|d| { d.name == cwd }).unwrap();

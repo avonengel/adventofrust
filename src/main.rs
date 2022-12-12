@@ -5,6 +5,8 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
+mod day9;
 mod day11;
 
 
@@ -49,6 +51,16 @@ fn main() {
     let day7_input = read_file_content("src/day7/input.txt");
     println!("  Part 1: {}", day7::size_of_small_dirs(&day7_input));
     println!("  Part 2: {}", day7::smallest_directory_to_delete(&day7_input));
+
+    println!("\nDay8:");
+    let day8_input = read_file_content("src/day8/input.txt");
+    println!("  Part 1: {}", day8::count_visible_trees(&day8_input));
+    println!("  Part 2: {}", day8::highest_scenic_score(&day8_input));
+
+    println!("\nDay9:");
+    let day9_input = read_file_content("src/day9/input.txt");
+    println!("  Part 1: {}", day9::part1(&day9_input));
+    println!("  Part 2: {}", day9::part2(&day9_input));
 
     println!("\nDay11:");
     let day11_input = read_file_content("src/day11/input.txt");

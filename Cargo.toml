@@ -9,7 +9,7 @@ edition = "2021"
 indoc = "1.0.3"
 regex = "1"
 serde_scan = "^0.4.1"
+matrix="0.22.0"
 itertools = "0.10.5"
 num-bigint = "0.4.3"
 num-integer = "0.1.45"
-
