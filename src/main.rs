@@ -71,7 +71,7 @@ fn main() {
     println!("\nDay12:");
     let day12_input = read_file_content("src/day12/input.txt");
     println!("  Part 1: {}", day12::steps_to_signal(&day12_input));
-    // println!("  Part 2: {}", day12::monkey_business(&day12_input, 10_000, false));
+    println!("  Part 2: {}", day12::shortest_hike(&day12_input));
 }
 
 fn read_file_content(path: &str) -> String {

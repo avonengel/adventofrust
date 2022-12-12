@@ -36,15 +36,25 @@ mod tests {
     #[test]
     fn shortest_path() {
         let mut height_map = super::parse_input(SAMPLE_INPUT);
-        assert_eq!(height_map.shortest_path((0, 1)), 1);
-        assert_eq!(height_map.shortest_path((1, 1)), 2);
-        assert_eq!(height_map.shortest_path(height_map.end), 31);
+        assert_eq!(height_map.shortest_path_form_start((0, 1)), 1);
+        assert_eq!(height_map.shortest_path_form_start((1, 1)), 2);
+        assert_eq!(height_map.shortest_path_form_start(height_map.end), 31);
+    }
+    #[test]
+    fn shortest_path_anywhere() {
+        let mut height_map = super::parse_input(SAMPLE_INPUT);
+        assert_eq!(height_map.shortest_path_anywhere(height_map.end), 29);
     }
 }
 
 pub(crate) fn steps_to_signal(input: &str) -> u32 {
     let mut height_map = parse_input(input);
-    height_map.shortest_path(height_map.end)
+    height_map.shortest_path_form_start(height_map.end)
+}
+
+pub(crate) fn shortest_hike(input: &str) -> u32 {
+    let mut height_map = parse_input(input);
+    height_map.shortest_path_anywhere(height_map.end)
 }
 
 #[derive(Debug)]
@@ -56,7 +66,21 @@ struct HeightMap {
 }
 
 impl HeightMap {
-    pub(crate) fn shortest_path(&mut self, target: (usize, usize)) -> u32 {
+    pub(crate) fn shortest_path_form_start(&mut self, target: (usize, usize)) -> u32 {
+        self.shortest_path(target)
+    }
+
+    fn shortest_path_anywhere(&mut self, target: (usize, usize)) -> u32 {
+        for row in 0..self.map.rows {
+            for col in 0..self.map.columns {
+                if self.height((row, col)) == 0 {
+                    self.costs[(row, col)] = 0;
+                }
+            }
+        }
+        self.shortest_path(target)
+    }
+    fn shortest_path(&mut self, target: (usize, usize)) -> u32 {
         self.costs[self.start] = 0;
         loop {
             let mut changed = false;
