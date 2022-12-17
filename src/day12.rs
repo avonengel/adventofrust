@@ -85,12 +85,12 @@ impl HeightMap {
         loop {
             let mut changed = false;
             // println!("================================================");
-            for row in 0..self.map.rows {
-                for col in 0..self.map.columns {
-                    // print!("{:>2} ", self.costs[(row, col)]);
-                }
-                // println!();
-            }
+            // for row in 0..self.map.rows {
+            //     for col in 0..self.map.columns {
+            //         print!("{:>2} ", self.costs[(row, col)]);
+            //     }
+            //     println!();
+            // }
             for row in 0..self.map.rows {
                 for col in 0..self.map.columns {
                     // dbg!((row, col));

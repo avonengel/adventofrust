@@ -9,7 +9,7 @@ mod tests {
 
     use indoc::indoc;
 
-    use crate::{day9, read_file_content};
+    use crate::read_file_content;
 
     use super::*;
 
