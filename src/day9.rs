@@ -1,10 +1,9 @@
-extern crate test;
-
 use std::collections::HashSet;
-
 
 #[cfg(test)]
 mod tests {
+    extern crate test;
+
     use test::Bencher;
 
     use indoc::indoc;

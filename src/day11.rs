@@ -4,12 +4,13 @@ use std::ops::{Add, Mul};
 use indoc::indoc;
 use itertools::Itertools;
 use num_integer::Integer;
-
 use regex::Regex;
 
 #[cfg(test)]
 mod tests {
-    use std::ops::Deref;
+    extern crate test;
+
+    use test::Bencher;
 
     use indoc::indoc;
     use itertools::Itertools;
@@ -139,7 +140,20 @@ mod tests {
 
     #[test]
     fn test_monkey_business2() {
-        assert_eq!(monkey_business(SAMPLE_INPUT, 10_000, false), 52166  * 52013 );
+        assert_eq!(monkey_business(SAMPLE_INPUT, 10_000, false), 52166 * 52013);
+    }
+
+    #[bench]
+    fn bench_monkey_business(b: &mut Bencher) {
+        b.iter(|| {
+            monkey_business(SAMPLE_INPUT, 20, true)
+        })
+    }
+    #[bench]
+    fn bench_monkey_business2(b: &mut Bencher) {
+        b.iter(|| {
+            monkey_business(SAMPLE_INPUT, 10_000, false)
+        })
     }
 }
 
@@ -188,7 +202,7 @@ impl Monkey {
         };
         let option = operand.parse::<u64>();
         Box::new(move |old: u64| {
-            fun(old.clone(), option.clone().unwrap_or(old))
+            fun(old, option.clone().unwrap_or(old))
         })
     }
 
@@ -227,12 +241,8 @@ fn round(monkeys: &mut Vec<Monkey>, decrease_worry_level: bool) {
 
 pub fn monkey_business(input: &str, rounds: u32, decrease_worry_level: bool) -> u64 {
     let mut monkeys = parse_monkeys(input);
-    let modulus = monkeys.iter().fold(1, |acc, m| acc * &m.test_divisor);
-    for r in 1..=rounds {
+    for _ in 1..=rounds {
         round(&mut monkeys, decrease_worry_level);
-        if r.is_multiple_of(&100) {
-            // dbg!(&monkeys.iter().map(|m| { m.item_count }).collect::<Vec<u64>>());
-        }
     }
     // dbg!(&monkeys.iter().map(|m| { m.item_count }).collect::<Vec<u64>>());
     monkeys.iter().map(|m| { m.item_count }).sorted().rev().take(2).product()

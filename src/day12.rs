@@ -1,6 +1,7 @@
 use std::cmp::min;
+
+use matrix::Size;
 use matrix::format::Conventional;
-use matrix::{Size};
 
 #[cfg(test)]
 mod tests {
@@ -40,6 +41,7 @@ mod tests {
         assert_eq!(height_map.shortest_path_form_start((1, 1)), 2);
         assert_eq!(height_map.shortest_path_form_start(height_map.end), 31);
     }
+
     #[test]
     fn shortest_path_anywhere() {
         let mut height_map = super::parse_input(SAMPLE_INPUT);
