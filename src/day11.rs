@@ -91,7 +91,8 @@ mod tests {
     #[test]
     fn test_round() {
         let mut monkeys = parse_monkeys(SAMPLE_INPUT);
-        super::round(&mut monkeys, true);
+        let modulus = monkeys.iter().fold(1_u64, |prd, m| { prd * m.test_divisor });
+        super::round(&mut monkeys, true, &modulus);
         assert_eq!(monkeys[0].items, vec![20_u32.into(), 23_u32.into(), 27_u32.into(), 26_u32.into()]);
         assert_eq!(monkeys[1].items, vec![2080_u32.into(), 25_u32.into(), 167_u32.into(), 207_u32.into(), 401_u32.into(), 1046_u32.into()]);
         assert!(monkeys[2].items.is_empty());
@@ -101,8 +102,9 @@ mod tests {
     #[test]
     fn test_round_2() {
         let mut monkeys = parse_monkeys(SAMPLE_INPUT);
-        super::round(&mut monkeys, true);
-        super::round(&mut monkeys, true);
+        let modulus = monkeys.iter().fold(1_u64, |prd, m| { prd * m.test_divisor });
+        super::round(&mut monkeys, true, &modulus);
+        super::round(&mut monkeys, true, &modulus);
         assert_eq!(monkeys[0].items, vec![695_u32.into(), 10_u32.into(), 71_u32.into(), 135_u32.into(), 350_u32.into()]);
         assert_eq!(monkeys[1].items, vec![43_u32.into(), 49_u32.into(), 58_u32.into(), 55_u32.into(), 362_u32.into()]);
         assert!(monkeys[2].items.is_empty());
@@ -112,8 +114,9 @@ mod tests {
     #[test]
     fn test_round_20() {
         let mut monkeys = parse_monkeys(SAMPLE_INPUT);
+        let modulus = monkeys.iter().fold(1_u64, |prd, m| { prd * m.test_divisor });
         for _ in 0..20 {
-            super::round(&mut monkeys, true);
+            super::round(&mut monkeys, true, &modulus);
         }
         assert_eq!(monkeys[0].items, vec![10_u32.into(), 12_u32.into(), 14_u32.into(), 26_u32.into(), 34_u32.into()]);
         assert_eq!(monkeys[1].items, vec![245_u32.into(), 93_u32.into(), 53_u32.into(), 199_u32.into(), 115_u32.into()]);
@@ -124,8 +127,9 @@ mod tests {
     #[test]
     fn test_item_counts() {
         let mut monkeys = parse_monkeys(SAMPLE_INPUT);
+        let modulus = monkeys.iter().fold(1_u64, |prd, m| { prd * m.test_divisor });
         for _ in 0..20 {
-            super::round(&mut monkeys, true);
+            super::round(&mut monkeys, true, &modulus);
         }
         assert_eq!(monkeys[0].item_count, 101);
         assert_eq!(monkeys[1].item_count, 95);
@@ -149,6 +153,7 @@ mod tests {
             monkey_business(SAMPLE_INPUT, 20, true)
         })
     }
+
     #[bench]
     fn bench_monkey_business2(b: &mut Bencher) {
         b.iter(|| {
@@ -224,15 +229,14 @@ impl Monkey {
 
 fn parse_monkeys(input: &str) -> Vec<Monkey> {
     input.lines().filter(|&l| { !l.is_empty() }).chunks(6).into_iter().map(|chunk| {
-        chunk.collect_vec().join("\n")
-    }).map(|s| { Monkey::new(&s) }).collect()
+        Monkey::new(&chunk.collect_vec().join("\n"))
+    }).collect()
 }
 
 
-fn round(monkeys: &mut Vec<Monkey>, decrease_worry_level: bool) {
-    let modulus = monkeys.iter().map(|m| { m.test_divisor }).product();
+fn round(monkeys: &mut Vec<Monkey>, decrease_worry_level: bool, modulus: &u64) {
     for i in 0..monkeys.len() {
-        while let Some((item, target)) = monkeys[i].throw(&modulus, decrease_worry_level) {
+        while let Some((item, target)) = monkeys[i].throw(modulus, decrease_worry_level) {
             // println!("Monkey {} throws {} at monkey {}", i, item, target);
             monkeys[target as usize].items.push_back(item);
         }
@@ -241,8 +245,9 @@ fn round(monkeys: &mut Vec<Monkey>, decrease_worry_level: bool) {
 
 pub fn monkey_business(input: &str, rounds: u32, decrease_worry_level: bool) -> u64 {
     let mut monkeys = parse_monkeys(input);
+    let modulus = monkeys.iter().fold(1, |prd, m| { prd * m.test_divisor });
     for _ in 1..=rounds {
-        round(&mut monkeys, decrease_worry_level);
+        round(&mut monkeys, decrease_worry_level, &modulus);
     }
     // dbg!(&monkeys.iter().map(|m| { m.item_count }).collect::<Vec<u64>>());
     monkeys.iter().map(|m| { m.item_count }).sorted().rev().take(2).product()
