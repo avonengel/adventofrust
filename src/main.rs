@@ -1,4 +1,8 @@
 #![feature(test)]
+
+use std::fs::File;
+use std::io::prelude::*;
+
 mod day1;
 mod day2;
 mod day3;
@@ -10,10 +14,8 @@ mod day8;
 mod day9;
 mod day11;
 mod day12;
+mod day10;
 
-
-use std::fs::File;
-use std::io::prelude::*;
 
 fn main() {
     println!("Advent, Advent, ein Lichtlein brennt:");
@@ -63,6 +65,11 @@ fn main() {
     let day9_input = read_file_content("src/day9/input.txt");
     println!("  Part 1: {}", day9::part1(&day9_input));
     println!("  Part 2: {}", day9::part2(&day9_input));
+
+    println!("\nDay10:");
+    let day10_input = read_file_content("src/day10/input.txt");
+    println!("  Part 1: {}", day10::signal_strength(&day10_input));
+    println!("  Part 2: \n{}", day10::print(&day10_input));
 
     println!("\nDay11:");
     let day11_input = read_file_content("src/day11/input.txt");
