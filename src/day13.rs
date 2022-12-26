@@ -1,9 +1,12 @@
 use std::cmp::Ordering;
+use std::fmt::{Debug, Formatter};
+
 use regex::Regex;
 
 #[cfg(test)]
 mod test {
     use indoc::indoc;
+
     use super::*;
 
     const SAMPLE_INPUT: &str = indoc! {"
@@ -70,34 +73,76 @@ mod test {
         ]);
         assert_eq!(packet, p);
     }
+
+    #[test]
+    fn compares_int_lists() {
+        assert!(Packet::new("[1,1,3,1,1]") < Packet::new("[1,1,5,1,1]"));
+    }
+
+    #[test]
+    fn compares_mixed_lists() {
+        assert!(Packet::new("[[1],[2,3,4]]") < Packet::new("[[1],4]"));
+        assert!(Packet::new("[[1],4]") > Packet::new("[[1],[2,3,4]]"));
+    }
 }
 
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq)]
 enum Packet {
     List(Vec<Packet>),
     Int(u32),
 }
 
+impl Debug for Packet {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Packet::List(l) => {
+                f.debug_list().entries(l.iter()).finish()
+                // write!(f, "[{}]", l.join(", "))
+            }
+            Packet::Int(i) => {
+                write!(f, "{i}")
+            }
+        }
+    }
+}
+
 impl PartialOrd for Packet {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        todo!()
+        match (&self, &other) {
+            (Packet::Int(self_int), Packet::Int(other_int)) => {
+                println!("Compare {self_int} vs {other_int}");
+                self_int.partial_cmp(other_int)
+            }
+            (Packet::List(self_list), Packet::List(other_list)) => {
+                println!("Compare {self_list:?} vs {other_list:?}");
+                self_list.partial_cmp(other_list)
+            }
+            (Packet::List(_), Packet::Int(other_int)) => {
+                self.partial_cmp(&Packet::List(vec![Packet::Int(*other_int)]))
+            }
+            (Packet::Int(self_int), Packet::List(_)) => {
+                Packet::List(vec![Packet::Int(*self_int)]).partial_cmp(other)
+            }
+        }
     }
 
     fn lt(&self, other: &Self) -> bool {
-        todo!()
+        self.partial_cmp(other).unwrap() == Ordering::Less
     }
 
     fn le(&self, other: &Self) -> bool {
-        todo!()
+        let ordering = self.partial_cmp(other).unwrap();
+        ordering == Ordering::Less || ordering == Ordering::Equal
     }
 
     fn gt(&self, other: &Self) -> bool {
-        todo!()
+        self.partial_cmp(other).unwrap() == Ordering::Greater
     }
 
     fn ge(&self, other: &Self) -> bool {
-        todo!()
+        let ordering = self.partial_cmp(other).unwrap();
+        ordering == Ordering::Greater || ordering == Ordering::Equal
     }
 }
 
