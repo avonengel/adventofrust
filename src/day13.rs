@@ -157,45 +157,26 @@ impl Debug for Packet {
 
 impl Ord for Packet {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap()
+        match (&self, &other) {
+            (Packet::Int(self_int), Packet::Int(other_int)) => {
+                self_int.cmp(other_int)
+            }
+            (Packet::List(self_list), Packet::List(other_list)) => {
+                self_list.cmp(other_list)
+            }
+            (Packet::List(_), Packet::Int(other_int)) => {
+                self.cmp(&Packet::List(vec![Packet::Int(*other_int)]))
+            }
+            (Packet::Int(self_int), Packet::List(_)) => {
+                Packet::List(vec![Packet::Int(*self_int)]).cmp(other)
+            }
+        }
     }
 }
 
 impl PartialOrd for Packet {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        // println!("Compare {self:?} vs {other:?}");
-        match (&self, &other) {
-            (Packet::Int(self_int), Packet::Int(other_int)) => {
-                self_int.partial_cmp(other_int)
-            }
-            (Packet::List(self_list), Packet::List(other_list)) => {
-                self_list.partial_cmp(other_list)
-            }
-            (Packet::List(_), Packet::Int(other_int)) => {
-                self.partial_cmp(&Packet::List(vec![Packet::Int(*other_int)]))
-            }
-            (Packet::Int(self_int), Packet::List(_)) => {
-                Packet::List(vec![Packet::Int(*self_int)]).partial_cmp(other)
-            }
-        }
-    }
-
-    fn lt(&self, other: &Self) -> bool {
-        self.partial_cmp(other).unwrap() == Ordering::Less
-    }
-
-    fn le(&self, other: &Self) -> bool {
-        let ordering = self.partial_cmp(other).unwrap();
-        ordering == Ordering::Less || ordering == Ordering::Equal
-    }
-
-    fn gt(&self, other: &Self) -> bool {
-        self.partial_cmp(other).unwrap() == Ordering::Greater
-    }
-
-    fn ge(&self, other: &Self) -> bool {
-        let ordering = self.partial_cmp(other).unwrap();
-        ordering == Ordering::Greater || ordering == Ordering::Equal
+    fn partial_cmp(&self, other: &Packet) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
 }
 
