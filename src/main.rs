@@ -81,6 +81,11 @@ fn main() {
     let day12_input = read_file_content("src/day12/input.txt");
     println!("  Part 1: {}", day12::steps_to_signal(&day12_input));
     println!("  Part 2: {}", day12::shortest_hike(&day12_input));
+
+    println!("\nDay13:");
+    let day13_input = read_file_content("src/day13/input.txt");
+    println!("  Part 1: {}", day13::part1(&day13_input));
+    println!("  Part 1: {}", day13::part2(&day13_input));
 }
 
 fn read_file_content(path: &str) -> String {

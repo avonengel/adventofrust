@@ -84,8 +84,57 @@ mod test {
         assert!(Packet::new("[[1],[2,3,4]]") < Packet::new("[[1],4]"));
         assert!(Packet::new("[[1],4]") > Packet::new("[[1],[2,3,4]]"));
     }
+
+    #[test]
+    fn compare_mixed_lists_2() {
+        assert!(Packet::new("[9]") > Packet::new("[[8,7,6]]"));
+        assert!(Packet::new("[[8,7,6]]") < Packet::new("[9]"));
+    }
+
+    #[test]
+    fn sums_correct_order_indices() {
+        assert_eq!(part1(SAMPLE_INPUT), 13);
+    }
+
+    #[test]
+    fn computes_decoder_key() {
+        let result = part2(SAMPLE_INPUT);
+        assert_eq!(result, 140);
+    }
 }
 
+pub fn part2(input: &str) -> u32 {
+    let mut packets = parse(input);
+    let div1 = Packet::new("[[2]]");
+    packets.push(Packet::new("[[2]]"));
+    let div2 = Packet::new("[[6]]");
+    packets.push(Packet::new("[[6]]"));
+    packets.sort();
+    packets.iter().enumerate().map(|(idx, packet)| {
+        // println!("{packet:?}");
+        if packet == &div1 || packet == &div2 {
+            (idx + 1) as u32
+        } else {
+            1_u32
+        }
+    }).product()
+}
+
+pub(crate) fn part1(input: &str) -> usize {
+    parse(input).chunks(2)
+        .enumerate()
+        .map(|(idx, chunk)| {
+            if chunk[0] < chunk[1] {
+                idx + 1
+            } else {
+                0
+            }
+        }).sum::<usize>()
+}
+
+fn parse(input: &str) -> Vec<Packet> {
+    input.lines().filter(|l| { !l.is_empty() }).map(Packet::new).collect()
+}
 
 #[derive(PartialEq, Eq)]
 enum Packet {
@@ -98,7 +147,6 @@ impl Debug for Packet {
         match self {
             Packet::List(l) => {
                 f.debug_list().entries(l.iter()).finish()
-                // write!(f, "[{}]", l.join(", "))
             }
             Packet::Int(i) => {
                 write!(f, "{i}")
@@ -107,15 +155,20 @@ impl Debug for Packet {
     }
 }
 
+impl Ord for Packet {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(other).unwrap()
+    }
+}
+
 impl PartialOrd for Packet {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        // println!("Compare {self:?} vs {other:?}");
         match (&self, &other) {
             (Packet::Int(self_int), Packet::Int(other_int)) => {
-                println!("Compare {self_int} vs {other_int}");
                 self_int.partial_cmp(other_int)
             }
             (Packet::List(self_list), Packet::List(other_list)) => {
-                println!("Compare {self_list:?} vs {other_list:?}");
                 self_list.partial_cmp(other_list)
             }
             (Packet::List(_), Packet::Int(other_int)) => {
