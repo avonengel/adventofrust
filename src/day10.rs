@@ -336,15 +336,15 @@ impl CathodeRay {
     }
 }
 
-fn sprite_position(x: &i32) -> String {
-    (0..40).map(|p| {
-        if (p - 1..=p + 1).contains(x) {
-            '#'
-        } else {
-            '.'
-        }
-    }).collect()
-}
+// fn sprite_position(x: &i32) -> String {
+//     (0..40).map(|p| {
+//         if (p - 1..=p + 1).contains(x) {
+//             '#'
+//         } else {
+//             '.'
+//         }
+//     }).collect()
+// }
 
 pub(crate) fn signal_strength(input: &str) -> i32 {
     CathodeRay::new(input).sum_interesting_signal_strengths()
