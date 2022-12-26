@@ -106,12 +106,11 @@ mod test {
 pub fn part2(input: &str) -> u32 {
     let mut packets = parse(input);
     let div1 = Packet::new("[[2]]");
-    packets.push(Packet::new("[[2]]"));
+    packets.push(div1.clone());
     let div2 = Packet::new("[[6]]");
-    packets.push(Packet::new("[[6]]"));
+    packets.push(div2.clone());
     packets.sort();
     packets.iter().enumerate().map(|(idx, packet)| {
-        // println!("{packet:?}");
         if packet == &div1 || packet == &div2 {
             (idx + 1) as u32
         } else {
@@ -136,7 +135,7 @@ fn parse(input: &str) -> Vec<Packet> {
     input.lines().filter(|l| { !l.is_empty() }).map(Packet::new).collect()
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone)]
 enum Packet {
     List(Vec<Packet>),
     Int(u32),
