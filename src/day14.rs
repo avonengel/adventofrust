@@ -23,18 +23,35 @@ mod tests {
     }
 }
 
+#[derive(Clone, Copy, PartialEq)]
+enum Material {
+    Air,
+    Rock,
+    Sand,
+}
+
+impl Element for Material {
+    fn zero() -> Self {
+        Material::Air
+    }
+
+    fn is_zero(&self) -> bool {
+        self == &Material::Air
+    }
+}
+
 struct Map {
-    rock: Compressed<bool>,
+    map: Compressed<Material>,
 }
 
 impl Map {
     pub(crate) fn dim(&self) -> (RangeInclusive<usize>, RangeInclusive<usize>) {
-        let x_range = match self.rock.iter().map(|p| { p.0 }).minmax() {
+        let x_range = match self.map.iter().map(|p| { p.0 }).minmax() {
             itertools::MinMaxResult::NoElements => panic!("empty matrix"),
             itertools::MinMaxResult::OneElement(el) => el..=el,
             itertools::MinMaxResult::MinMax(min, max) => min..=max,
         };
-        let y_range = match self.rock.iter().map(|p| { p.1 }).minmax() {
+        let y_range = match self.map.iter().map(|p| { p.1 }).minmax() {
             itertools::MinMaxResult::NoElements => panic!("empty matrix"),
             itertools::MinMaxResult::OneElement(el) => min(0, el)..=el,
             itertools::MinMaxResult::MinMax(min_rock, max) => min(0, min_rock)..=max,
@@ -50,8 +67,10 @@ impl Display for Map {
         for y in dimensions.1.clone() {
             f.write_fmt(format_args!("{y:y_digits$} "))?;
             for x in dimensions.0.clone() {
-                if self.rock.get((x, y)) {
+                if self.map.get((x, y)) == Material::Rock {
                     f.write_char('#')?;
+                } else if self.map.get((x, y)) == Material::Sand {
+                    f.write_char('0')?;
                 } else if (x, y) == (500, 0) {
                     f.write_char('+')?;
                 } else {
@@ -95,9 +114,9 @@ fn parse_scan(input: &str) -> Map {
     let max_y = rock_points.iter().map(|p| { p.1 }).max().unwrap();
     let mut matrix = Compressed::new((max_x + 1, max_y + 1), Variant::Column);
     rock_points.iter().for_each(|&point| {
-        matrix.set(point, true);
+        matrix.set(point, Material::Rock);
     });
     Map {
-        rock: matrix
+        map: matrix
     }
 }
