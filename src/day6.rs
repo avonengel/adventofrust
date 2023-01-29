@@ -45,8 +45,8 @@ pub(crate) fn unique_characters_offset(input: &str, unique_chars: usize) -> usiz
         }
     // }).inspect(|i| {
         // dbg!(i);
-    }).filter(|&x| {
+    }).find(|&x| {
         x > 0
-    }).next().unwrap()
+    }).unwrap()
     // 0
 }

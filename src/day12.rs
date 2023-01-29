@@ -164,7 +164,7 @@ fn parse_input(input: &str) -> HeightMap {
             end = position;
             matrix[position] = "abcdefghijklmnopqrstuvwxyz".find('z').unwrap();
         } else {
-            panic!("Unknown char found {}", chr);
+            panic!("Unknown char found {chr}");
         }
     });
     let mut cost = Conventional::new(matrix.dimensions());

@@ -29,9 +29,9 @@ pub(crate) fn fully_contained_pairs(input: &str) -> u32 {
 
 pub(crate) fn map_count_assignments(input: &str, predicate: fn(&str, &str) -> bool) -> u32 {
     input.lines().map(|line| {
-        match line.split_once(",") {
+        match line.split_once(',') {
             Some((first, second)) => predicate(first, second),
-            _ => panic!("Could not parse line: {:?}", line)
+            _ => panic!("Could not parse line: {line:?}")
         }
     })
         .filter(|x| { *x })
@@ -56,6 +56,6 @@ fn is_fully_contained(first: &str, second: &str) -> bool {
 }
 
 fn parse_range(range: &str) -> RangeInclusive<u32> {
-    let (first, second) = range.split_once("-").unwrap();
-    return first.parse().unwrap()..=second.parse().unwrap();
+    let (first, second) = range.split_once('-').unwrap();
+    first.parse().unwrap()..=second.parse().unwrap()
 }

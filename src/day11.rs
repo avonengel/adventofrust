@@ -50,7 +50,6 @@ mod tests {
     #[test]
     fn test_parses_monkey() {
         let monkey = Monkey::new(&SAMPLE_INPUT.lines().take(6).join("\n"));
-        assert_eq!(monkey.id, 0);
         assert_eq!(monkey.items, vec![79_u32.into(), 98_u32.into()]);
         assert_eq!((monkey.operation)(1_u32.into()), 19_u32.into());
         assert_eq!((monkey.operation)(2_u32.into()), (2_u32 * 19_u32).into());
@@ -63,7 +62,6 @@ mod tests {
     fn test_parses_multiple_monkeys() {
         let mut monkeys = parse_monkeys(SAMPLE_INPUT);
         let last = monkeys.pop().unwrap();
-        assert_eq!(last.id, 3);
         assert_eq!(last.items, vec![74_u32.into()]);
         assert_eq!((last.operation)(1_u32.into()), 4_u32.into());
         assert_eq!((last.operation)(2_u32.into()), 5_u32.into());
@@ -163,7 +161,6 @@ mod tests {
 }
 
 struct Monkey {
-    id: u32,
     items: VecDeque<u64>,
     operation: Box<dyn Fn(u64) -> u64>,
     test_divisor: u64,
@@ -189,7 +186,6 @@ impl Monkey {
         // dbg!(&captures);
         let starting_items = captures[2].split(", ").map(|i| { i.parse::<u64>().unwrap() }).collect();
         Monkey {
-            id: captures[1].parse::<u32>().unwrap(),
             items: starting_items,
             operation: Monkey::parse_operation(&captures[3], &captures[4]),
             test_divisor: captures[5].parse::<u64>().unwrap(),
@@ -203,7 +199,7 @@ impl Monkey {
         let fun = match operation {
             "*" => u64::mul,
             "+" => u64::add,
-            _ => panic!("unmatched operation: {:?}", operation),
+            _ => panic!("unmatched operation: {operation:?}"),
         };
         let option = operand.parse::<u64>();
         Box::new(move |old: u64| {

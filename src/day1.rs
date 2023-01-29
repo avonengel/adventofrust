@@ -63,7 +63,7 @@ pub(crate) fn top3_calories(input: &str) -> u32 {
 
 fn consider_elve_calories(result: &mut [u32; 3], sum: &u32) {
     for (idx, r) in result.iter().enumerate() {
-        if r < &sum {
+        if r < sum {
             result[idx] = *sum;
             result.sort();
             break;

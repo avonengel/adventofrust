@@ -87,7 +87,7 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        assert_eq!(super::part2(PART2_SAMPLE), 36);
+        assert_eq!(part2(PART2_SAMPLE), 36);
     }
 
     #[bench]
@@ -122,7 +122,7 @@ pub(crate) fn part2(input: &str) -> usize {
             "U" => (0, 1),
             "D" => (0, -1),
             "L" => (-1, 0),
-            _ => panic!("unsupported direction: {:?}", direction_str)
+            _ => panic!("unsupported direction: {direction_str:?}")
         };
         // dbg!(&instruction);
         let steps = instruction[2..].parse::<usize>().unwrap();
@@ -155,7 +155,7 @@ pub(crate) fn part1(input: &str) -> usize {
             "U" => (0, 1),
             "D" => (0, -1),
             "L" => (-1, 0),
-            _ => panic!("unsupported direction: {:?}", direction_str)
+            _ => panic!("unsupported direction: {direction_str:?}")
         };
         // dbg!(&instruction);
         let steps = instruction[2..].parse::<usize>().unwrap();
@@ -173,39 +173,39 @@ fn new_knot_position(head: &(i32, i32), tail: &(i32, i32)) -> (i32, i32) {
     let distance = (head.0 - tail.0, head.1 - tail.1);
     match distance {
         // head over tail
-        (0, 0) => tail.clone(),
+        (0, 0) => *tail,
         // right
         (2, 0) => (tail.0 + 1, tail.1),
-        (1, 0) => tail.clone(),
+        (1, 0) => *tail,
         // left
         (-2, 0) => (tail.0 - 1, tail.1),
-        (-1, 0) => tail.clone(),
+        (-1, 0) => *tail,
         // up
         (0, 2) => (tail.0, tail.1 + 1),
-        (0, 1) => tail.clone(),
+        (0, 1) => *tail,
         // down
         (0, -2) => (tail.0, tail.1 - 1),
-        (0, -1) => tail.clone(),
+        (0, -1) => *tail,
         // diagonal right up
-        (1, 1) => tail.clone(),
+        (1, 1) => *tail,
         (1, 2) => (tail.0 + 1, tail.1 + 1),
         (2, 1) => (tail.0 + 1, tail.1 + 1),
         (2, 2) => (tail.0 + 1, tail.1 + 1),
         // diagonal left up
-        (-1, 1) => tail.clone(),
+        (-1, 1) => *tail,
         (-2, 1) => (tail.0 - 1, tail.1 + 1),
         (-1, 2) => (tail.0 - 1, tail.1 + 1),
         (-2, 2) => (tail.0 - 1, tail.1 + 1),
         // diagonal right down
-        (1, -1) => tail.clone(),
+        (1, -1) => *tail,
         (2, -1) => (tail.0 + 1, tail.1 - 1),
         (1, -2) => (tail.0 + 1, tail.1 - 1),
         (2, -2) => (tail.0 + 1, tail.1 - 1),
         // diagonal left down
-        (-1, -1) => tail.clone(),
+        (-1, -1) => *tail,
         (-2, -1) => (tail.0 - 1, tail.1 - 1),
         (-1, -2) => (tail.0 - 1, tail.1 - 1),
         (-2, -2) => (tail.0 - 1, tail.1 - 1),
-        _ => panic!("unsupported move: {:?}", distance),
+        _ => panic!("unsupported move: {distance:?}"),
     }
 }

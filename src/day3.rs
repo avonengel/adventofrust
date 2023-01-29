@@ -12,7 +12,7 @@ mod tests {
 
     #[test]
     fn parses_single_line() {
-        assert_eq!(super::priority_sum(SAMPLE_INPUT.lines().nth(0).unwrap()), 16)
+        assert_eq!(super::priority_sum(SAMPLE_INPUT.lines().next().unwrap()), 16)
     }
     #[test]
     fn parses_sample_input() {
@@ -36,9 +36,9 @@ pub(crate) fn priority_sum(input: &str) -> u32 {
 
 fn char_to_priority(c: char) -> u32 {
     if c.is_lowercase() {
-        return c as u32 - 'a' as u32 + 1
+        c as u32 - 'a' as u32 + 1
     } else {
-        return c as u32 - 'A' as u32 + 27
+        c as u32 - 'A' as u32 + 27
     }
 }
 

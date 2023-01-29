@@ -68,7 +68,7 @@ fn visible_left(tree_matrix: &Conventional<u32>, (row, col): (usize, usize)) -> 
             return false;
         }
     }
-    return true;
+    true
 }
 
 fn visible_top(tree_matrix: &Conventional<u32>, (row, col): (usize, usize)) -> bool {
@@ -77,7 +77,7 @@ fn visible_top(tree_matrix: &Conventional<u32>, (row, col): (usize, usize)) -> b
             return false;
         }
     }
-    return true;
+    true
 }
 
 fn visible_right(tree_matrix: &Conventional<u32>, (row, col): (usize, usize)) -> bool {
@@ -86,7 +86,7 @@ fn visible_right(tree_matrix: &Conventional<u32>, (row, col): (usize, usize)) ->
             return false;
         }
     }
-    return true;
+    true
 }
 
 fn visible_bottom(tree_matrix: &Conventional<u32>, (row, col): (usize, usize)) -> bool {
@@ -95,7 +95,7 @@ fn visible_bottom(tree_matrix: &Conventional<u32>, (row, col): (usize, usize)) -
             return false;
         }
     }
-    return true;
+    true
 }
 
 pub(crate) fn highest_scenic_score(input: &str) -> u32 {

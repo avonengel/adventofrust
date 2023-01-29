@@ -124,7 +124,7 @@ fn parse_scan(input: &str) -> Map {
             line.split("->")
                 .map(str::trim)
                 .flat_map(|point: &str| {
-                    point.split(",")
+                    point.split(',')
                         .tuple_windows()
                         .map(|(x, y)| { (x.parse::<usize>().unwrap(), y.parse::<usize>().unwrap()) })
                     // .inspect(|point| { dbg!(point); })

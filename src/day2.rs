@@ -42,7 +42,7 @@ pub(crate) fn total_score(input: &str) -> u32 {
         sum += shape_score(&mine);
         sum += match_score(&opponent, &mine);
     }
-    return sum;
+    sum
 }
 pub(crate) fn total_score2(input: &str) -> u32 {
     let mut sum = 0;
@@ -51,7 +51,7 @@ pub(crate) fn total_score2(input: &str) -> u32 {
         sum += shape_score2(&opponent,&outcome);
         sum += match_score2(&outcome);
     }
-    return sum;
+    sum
 }
 
 fn match_score2(outcome: &Outcome) -> u32 {
@@ -102,18 +102,18 @@ fn shape_score2(opponent:&Symbol, outcome: &Outcome) -> u32 {
 
 fn parse(line: &str) -> (Symbol, Symbol) {
     let mut chars = line.chars();
-    let opponent = match chars.nth(0) {
+    let opponent = match chars.next() {
         Some('A') => Rock,
         Some('B') => Paper,
         Some('C') => Scissors,
-        Some(ref value) => panic!("Could not match opponent's symbol: {:?}", value),
+        Some(ref value) => panic!("Could not match opponent's symbol: {value:?}"),
         _ => panic!("could not match opponent's symbol")
     };
     let mine = match chars.nth(1) {
         Some('X') => Rock,
         Some('Y') => Paper,
         Some('Z') => Scissors,
-        Some(ref value) => panic!("Could not match my symbol: {:?}", value),
+        Some(ref value) => panic!("Could not match my symbol: {value:?}"),
         _ => panic!("could not match opponent's symbol")
     };
     (opponent, mine)
@@ -121,18 +121,18 @@ fn parse(line: &str) -> (Symbol, Symbol) {
 
 fn parse2(line: &str) -> (Symbol, Outcome) {
     let mut chars = line.chars();
-    let opponent = match chars.nth(0) {
+    let opponent = match chars.next() {
         Some('A') => Rock,
         Some('B') => Paper,
         Some('C') => Scissors,
-        Some(ref value) => panic!("Could not match opponent's symbol: {:?}", value),
+        Some(ref value) => panic!("Could not match opponent's symbol: {value:?}"),
         _ => panic!("could not match opponent's symbol")
     };
     let outcome = match chars.nth(1) {
         Some('X') => Lose,
         Some('Y') => Draw,
         Some('Z') => Win,
-        Some(ref value) => panic!("Could not match my symbol: {:?}", value),
+        Some(ref value) => panic!("Could not match my symbol: {value:?}"),
         _ => panic!("could not match opponent's symbol")
     };
     (opponent, outcome)

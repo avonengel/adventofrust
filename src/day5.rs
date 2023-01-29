@@ -58,7 +58,7 @@ pub(crate) fn crate_message2(input: &str) -> String {
 }
 
 fn parse_instruction(instruction: &&str, regex: &Regex) -> (usize, usize, usize) {
-    let captures = regex.captures(&instruction).unwrap();
+    let captures = regex.captures(instruction).unwrap();
     let count = captures[1].parse::<usize>().unwrap();
     let from = captures[2].parse::<usize>().unwrap();
     let to = captures[3].parse::<usize>().unwrap();
@@ -68,13 +68,13 @@ fn parse_instruction(instruction: &&str, regex: &Regex) -> (usize, usize, usize)
 fn parse_stacks(raw_stacks: &str) -> Vec<Vec<&str>> {
     let stack_count = raw_stacks.lines().map(str::len).max().unwrap() / 4 + 1;
     let mut stacks: Vec<Vec<&str>> = vec![Vec::new(); stack_count];
-    for layer in raw_stacks.lines().filter(|l| { !l.is_empty() && l.contains("[") }) {
+    for layer in raw_stacks.lines().filter(|l| { !l.is_empty() && l.contains('[') }) {
         let stack_count = layer.len() / 4 + 1;
         // dbg!(stack_count);
         for stack_idx in 0..stack_count {
             let crate_str = &layer[stack_idx * 4..stack_idx * 4 + 3];
             // dbg!(crate_str);
-            if crate_str.contains("[") {
+            if crate_str.contains('[') {
                 stacks[stack_idx].insert(0, &crate_str[1..2]);
             }
         }
