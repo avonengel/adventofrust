@@ -19,7 +19,29 @@ mod tests {
     fn parses_input() {
         let map = parse_scan(SAMPLE_INPUT);
         assert_eq!((494..=503, 0..=9), map.dim());
-        println!("{map}");
+    }
+
+    #[test]
+    fn displays_nicely() {
+        const EXPECTED: &str = "  4     5  5
+  9     0  0
+  4     0  3
+0 ......+...
+1 ..........
+2 ..........
+3 ..........
+4 ....#...##
+5 ....#...#.
+6 ..###...#.
+7 ........#.
+8 ........#.
+9 #########.
+";
+        let map = parse_scan(SAMPLE_INPUT);
+        let string = format!("{map}");
+        let actual = string.as_str();
+        assert_eq!(EXPECTED, actual);
+
     }
 }
 
@@ -63,7 +85,19 @@ impl Map {
 impl Display for Map {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let dimensions = self.dim();
-        let y_digits = (*dimensions.1.end() as f32).log10() as usize;
+        let y_digits = (*dimensions.1.end() as f32).log10() as usize + 1;
+        let x_digits = (*dimensions.0.end() as f32).log10() as usize;
+        for x in 0..=x_digits {
+            f.write_str(" ".repeat(y_digits + 1).as_str())?;
+            for y in dimensions.0.clone() {
+                if y == *dimensions.0.start() || y % 10 == 0 || y == *dimensions.0.end() {
+                    f.write_char(y.to_string().chars().nth(x).unwrap())?;
+                } else {
+                    write!(f, " ")?;
+                }
+            }
+            writeln!(f)?;
+        }
         for y in dimensions.1.clone() {
             f.write_fmt(format_args!("{y:y_digits$} "))?;
             for x in dimensions.0.clone() {
@@ -79,7 +113,7 @@ impl Display for Map {
             }
             writeln!(f)?;
         }
-        writeln!(f)
+        Ok(())
     }
 }
 
