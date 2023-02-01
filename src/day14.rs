@@ -38,10 +38,130 @@ mod tests {
 9 #########.
 ";
         let map = parse_scan(SAMPLE_INPUT);
-        let string = format!("{map}");
-        let actual = string.as_str();
-        assert_eq!(EXPECTED, actual);
+        assert_eq!(EXPECTED, format!("{map}"));
+    }
 
+    #[test]
+    fn test_sand_falls_down_vertically() {
+        let mut map = parse_scan(SAMPLE_INPUT);
+        map.drop_sand();
+
+        const EXPECTED: &str = "  4     5  5
+  9     0  0
+  4     0  3
+0 ......+...
+1 ..........
+2 ..........
+3 ..........
+4 ....#...##
+5 ....#...#.
+6 ..###...#.
+7 ........#.
+8 ......o.#.
+9 #########.
+";
+        assert_eq!(EXPECTED, format!("{map}"));
+    }
+
+    #[test]
+    fn test_sand_falls_down_vertically_then_left() {
+        let mut map = parse_scan(SAMPLE_INPUT);
+        map.drop_sand();
+        map.drop_sand();
+
+        const EXPECTED: &str = "  4     5  5
+  9     0  0
+  4     0  3
+0 ......+...
+1 ..........
+2 ..........
+3 ..........
+4 ....#...##
+5 ....#...#.
+6 ..###...#.
+7 ........#.
+8 .....oo.#.
+9 #########.
+";
+        assert_eq!(EXPECTED, format!("{map}"));
+    }
+
+    #[test]
+    fn test_sand_falls_down_vertically_then_left_then_right() {
+        let mut map = parse_scan(SAMPLE_INPUT);
+        map.drop_sand();
+        map.drop_sand();
+        map.drop_sand();
+
+        const EXPECTED: &str = "  4     5  5
+  9     0  0
+  4     0  3
+0 ......+...
+1 ..........
+2 ..........
+3 ..........
+4 ....#...##
+5 ....#...#.
+6 ..###...#.
+7 ........#.
+8 .....ooo#.
+9 #########.
+";
+        assert_eq!(EXPECTED, format!("{map}"));
+    }
+
+    #[test]
+    fn test_sand_24() {
+        let mut map = parse_scan(SAMPLE_INPUT);
+        for _ in 0..24 {
+            map.drop_sand();
+        }
+
+        const EXPECTED: &str = "  4     5  5
+  9     0  0
+  4     0  3
+0 ......+...
+1 ..........
+2 ......o...
+3 .....ooo..
+4 ....#ooo##
+5 ...o#ooo#.
+6 ..###ooo#.
+7 ....oooo#.
+8 .o.ooooo#.
+9 #########.
+";
+        assert_eq!(EXPECTED, format!("{map}"));
+    }
+
+    #[test]
+    fn test_sand_drops_out_at_bottom() {
+        let mut map = parse_scan(SAMPLE_INPUT);
+        for _ in 0..250 {
+            map.drop_sand();
+        }
+
+        const EXPECTED: &str = "  4     5  5
+  9     0  0
+  4     0  3
+0 ......+...
+1 ..........
+2 ......o...
+3 .....ooo..
+4 ....#ooo##
+5 ...o#ooo#.
+6 ..###ooo#.
+7 ....oooo#.
+8 .o.ooooo#.
+9 #########.
+";
+        assert_eq!(EXPECTED, format!("{map}"));
+    }
+
+    #[test]
+    fn computes_units_until_full() {
+        let mut map = parse_scan(SAMPLE_INPUT);
+        assert_eq!(24, map.sand_until_full());
     }
 }
 
@@ -80,6 +200,47 @@ impl Map {
         };
         (x_range, y_range)
     }
+
+    fn sand_until_full(&mut self) -> u32 {
+        let mut sand = 0;
+        while self.drop_sand() {
+            sand += 1;
+        }
+        sand
+    }
+
+    fn drop_sand(&mut self) -> bool {
+        // determine where sand will come to rest by starting at the origin, and applying the rules]
+        // until it comes to rest
+        let mut sand_location = (500, 0);
+        loop {
+            // A unit of sand always falls down one step if possible.
+            let (x, y) = sand_location;
+            if !self.dim().1.contains(&(y + 1)) {
+                // sand falls out the bottom
+                return false
+            }
+            if self.map.get((x, y + 1)) == Material::Air {
+                sand_location = (x, y + 1);
+            } else if self.map.get((x - 1, y + 1)) == Material::Air {
+                // If the tile immediately below is blocked (by rock or sand), the unit of sand
+                // attempts to instead move diagonally one step down and to the left.
+                sand_location = (x - 1, y + 1);
+            } else if self.map.get((x + 1, y + 1)) == Material::Air {
+                // If that tile is blocked, the unit of sand attempts to instead move diagonally
+                // one step down and to the right.
+                sand_location = (x + 1, y + 1);
+            } else {
+                // Sand keeps moving as long as it is able to do so, at each step trying to move
+                // down, then down-left, then down-right. If all three possible destinations are
+                // blocked, the unit of sand comes to rest and no longer moves
+                break;
+            }
+        }
+        // then update the map at the location to `Sand`
+        self.map.set(sand_location, Material::Sand);
+        true
+    }
 }
 
 impl Display for Map {
@@ -104,7 +265,7 @@ impl Display for Map {
                 if self.map.get((x, y)) == Material::Rock {
                     f.write_char('#')?;
                 } else if self.map.get((x, y)) == Material::Sand {
-                    f.write_char('0')?;
+                    f.write_char('o')?;
                 } else if (x, y) == (500, 0) {
                     f.write_char('+')?;
                 } else {
@@ -153,4 +314,9 @@ fn parse_scan(input: &str) -> Map {
     Map {
         map: matrix
     }
+}
+
+pub(crate) fn part1(input: &str) -> u32 {
+    let mut map = parse_scan(input);
+    map.sand_until_full()
 }

@@ -86,7 +86,13 @@ fn main() {
     println!("\nDay13:");
     let day13_input = read_file_content("src/day13/input.txt");
     println!("  Part 1: {}", day13::part1(&day13_input));
-    println!("  Part 1: {}", day13::part2(&day13_input));
+    println!("  Part 2: {}", day13::part2(&day13_input));
+
+    println!("\nDay14:");
+    let day14_input = read_file_content("src/day14/input.txt");
+    // TODO this seems to be extremely inefficient, as it takes several seconds => learn how to profile and optimize it
+    println!("  Part 1: {}", day14::part1(&day14_input));
+    // println!("  Part 2: {}", day13::part2(&day13_input));
 }
 
 fn read_file_content(path: &str) -> String {
